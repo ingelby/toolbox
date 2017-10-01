@@ -1,0 +1,24 @@
+{
+  "name": "ingelby/toolbox",
+  "description": "Ingelby internal toolbox",
+  "type": "library",
+  "license": "Proprietary",
+  "authors": [
+    {
+      "name": "George Hallam",
+      "email": "george.hallam@ingelby.com.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "ingelby\\toolbox\\": "src"
+    }
+  },
+  "require": {
+  },
+  "require-dev": {
+  },
+  "repositories": [
+
+  ]
+}
