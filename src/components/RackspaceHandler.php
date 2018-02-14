@@ -1,13 +1,14 @@
 <?php
 
+
+namespace ingelby\toolbox\components;
+
+
 use OpenCloud\Rackspace;
-use yii\web\UploadedFile;
+use \yii\web\UploadedFile;
 use OpenCloud\ObjectStore\Constants\UrlType;
 
-namespace ingelby\toolbox\behaviors;
-
-
-class RackspaceHandler extends Component
+class RackspaceHandler extends \yii\base\Component
 {
     const REGION_LONDON = 'LON';
 
@@ -65,7 +66,7 @@ class RackspaceHandler extends Component
         if (null === $this->region) {
             $this->region = static::REGION_LONDON;
         }
-         $this->client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
+        $this->client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
             'username' => $this->username,
             'apiKey'   => $this->apiKey,
         ));
@@ -74,36 +75,54 @@ class RackspaceHandler extends Component
     /**
      * @param \yii\web\UploadedFile $image
      * @param bool $appendTimestamp
-     * @param null $localStorageFullPath
+     * @param string $remoteFolderPath
+     * @param string|null $localFolderPath
      * @return bool|string false on failure, public url on success
+     * @internal param null $localStorageFullPath
      */
-    public function storeImage(UploadedFile $image, $appendTimestamp = false, $localStorageFullPath = null)
+    public function storeImage(
+        \yii\web\UploadedFile $image,
+        $appendTimestamp = false,
+        $remoteFolderPath = '',
+        $localFolderPath = null
+    )
     {
         $objectStoreService = $this->client->objectStoreService(null, $this->region);
 
-        $bouxCdn = $objectStoreService->getContainer(\Yii::$app->params['cdnServiceName']);
+        $bouxCdn = $objectStoreService->getContainer($this->projectContainer);
 
         $imageName = '';
 
         if ($appendTimestamp) {
             $imageName .= time() . '_';
         }
-        $imageName .= urlencode($image->baseName) . '.' . $image->extension;
+        $imageName .= rawurlencode($image->baseName) . '.' . $image->extension;
 
-        if (null === $localStorageFullPath) {
-            $localStorageFullPath = (string) '/tmp/' . $this->projectContainer . DIRECTORY_SEPARATOR . $imageName;
+        if (null === $localFolderPath) {
+            $localFolderPath = '/tmp/' . $this->projectContainer . DIRECTORY_SEPARATOR;
         }
 
-        if (false === $image->saveAs($localStorageFullPath, false)) {
+        $localStorageFullPath = $localFolderPath . $imageName;
+
+        if (!@mkdir($localFolderPath, 0777, true) && !is_dir($localFolderPath)) {
+            throw new \RuntimeException('Unable to create directory: ' . $localFolderPath);
+        }
+
+        if (false === $image->saveAs($localStorageFullPath, true)) {
             return false;
         }
 
         $handle = fopen($localStorageFullPath, 'rb');
 
+        $remoteStorageFullPath = $this->environment . DIRECTORY_SEPARATOR  . $remoteFolderPath . $imageName;
 
         /** @noinspection PhpParamsInspection */
 
-        $response = $bouxCdn->uploadObject($this->environment . DIRECTORY_SEPARATOR  . $imageName, $handle);
+        $response = $bouxCdn->uploadObject($remoteStorageFullPath, $handle);
+
+        if ($this->cleanUp) {
+            unlink($localStorageFullPath);
+        }
 
         return (string) $response->getPublicUrl(UrlType::SSL);
     }
