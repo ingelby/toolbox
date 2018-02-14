@@ -15,10 +15,10 @@
     }
   },
   "require": {
+    "rackspace/php-opencloud": "v1.16.0"
   },
   "require-dev": {
   },
   "repositories": [
-
   ]
 }
