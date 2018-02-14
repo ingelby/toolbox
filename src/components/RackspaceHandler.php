@@ -127,4 +127,26 @@ class RackspaceHandler extends \yii\base\Component
         return (string) $response->getPublicUrl(UrlType::SSL);
     }
 
+    /**
+     * @param string $localFolderPath
+     * @param string $remoteFolderPath
+     * @return string publicUrl
+     */
+    public function uploadImage($localFolderPath, $remoteFolderPath)
+    {
+        $objectStoreService = $this->client->objectStoreService(null, $this->region);
+
+        $bouxCdn = $objectStoreService->getContainer($this->projectContainer);
+
+        $handle = fopen($localFolderPath, 'rb');
+
+        $remoteStorageFullPath = $this->environment . DIRECTORY_SEPARATOR  . $remoteFolderPath;
+
+        /** @noinspection PhpParamsInspection */
+
+        $response = $bouxCdn->uploadObject($remoteStorageFullPath, $handle);
+
+        return (string) $response->getPublicUrl(UrlType::SSL);
+    }
+
 }
