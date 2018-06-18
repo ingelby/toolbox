@@ -66,10 +66,22 @@ class RackspaceHandler extends \yii\base\Component
         if (null === $this->region) {
             $this->region = static::REGION_LONDON;
         }
-        $this->client = new Rackspace(Rackspace::UK_IDENTITY_ENDPOINT, array(
-            'username' => $this->username,
-            'apiKey'   => $this->apiKey,
-        ));
+        $this->client = new Rackspace(
+            Rackspace::UK_IDENTITY_ENDPOINT,
+            array(
+                'username' => $this->username,
+                'apiKey'   => $this->apiKey,
+            ),
+
+            array(
+                // Guzzle ships with outdated certs
+                Rackspace::SSL_CERT_AUTHORITY => 'system',
+                Rackspace::CURL_OPTIONS => array(
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_SSL_VERIFYHOST => 2,
+                ),
+            )
+        );
     }
 
     /**
