@@ -101,7 +101,7 @@ class RackspaceHandler extends \yii\base\Component
     {
         $objectStoreService = $this->client->objectStoreService(null, $this->region);
 
-        $bouxCdn = $objectStoreService->getContainer($this->projectContainer);
+        $cdn = $objectStoreService->getContainer($this->projectContainer);
 
         $imageName = '';
 
@@ -130,13 +130,34 @@ class RackspaceHandler extends \yii\base\Component
 
         /** @noinspection PhpParamsInspection */
 
-        $response = $bouxCdn->uploadObject($remoteStorageFullPath, $handle);
+        $response = $cdn->uploadObject($remoteStorageFullPath, $handle);
 
         if ($this->cleanUp) {
             unlink($localStorageFullPath);
         }
 
         return (string) $response->getPublicUrl(UrlType::SSL);
+    }
+
+    /**
+     * @param $fullImageUrl (excluding project container)
+     * @return bool true if succesful
+     */
+    public function deleteImage($fullImageUrl)
+    {
+        $objectStoreService = $this->client->objectStoreService(null, $this->region);
+
+        $cdn = $objectStoreService->getContainer($this->projectContainer);
+
+        $cdn->deleteObject($this->environment . DIRECTORY_SEPARATOR . $fullImageUrl);
+
+        try {
+            $cdn->getObject($fullImageUrl);
+        } catch (\Exception $e) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -148,7 +169,7 @@ class RackspaceHandler extends \yii\base\Component
     {
         $objectStoreService = $this->client->objectStoreService(null, $this->region);
 
-        $bouxCdn = $objectStoreService->getContainer($this->projectContainer);
+        $cdn = $objectStoreService->getContainer($this->projectContainer);
 
         $handle = fopen($localFolderPath, 'rb');
 
@@ -156,7 +177,7 @@ class RackspaceHandler extends \yii\base\Component
 
         /** @noinspection PhpParamsInspection */
 
-        $response = $bouxCdn->uploadObject($remoteStorageFullPath, $handle);
+        $response = $cdn->uploadObject($remoteStorageFullPath, $handle);
 
         return (string) $response->getPublicUrl(UrlType::SSL);
     }
