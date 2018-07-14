@@ -7,6 +7,18 @@ use Carbon\Carbon;
 class DateTimeHelper
 {
     /**
+     * @param string $date
+     * @param string $format
+     * @return bool
+     */
+    public static function validateDate($date, $format = 'Y-m-d')
+    {
+        $d = \DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) === $date;
+    }
+
+
+    /**
      * @param Carbon $carbon
      * @param Carbon|null $diffDate
      * @param array $disallowedMeasurements
