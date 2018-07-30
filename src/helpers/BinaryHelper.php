@@ -11,7 +11,7 @@ class BinaryHelper
      * @return string
      * @throws \RuntimeException
      */
-    public static function getBase64AsBinary($base64EncodedBinary): string
+    public static function getBase64AsBinary($base64EncodedBinary)
     {
         $splitData = explode(',', $base64EncodedBinary);
         if (2 !== \count($splitData)) {
@@ -35,7 +35,7 @@ class BinaryHelper
      * @return string
      * @throws \RuntimeException
      */
-    public static function getExtension($base64EncodedBinary): string
+    public static function getExtension($base64EncodedBinary)
     {
         $regex = '/data:(\w+\/\w+);base64/';
         preg_match($regex, $base64EncodedBinary, $matches);
