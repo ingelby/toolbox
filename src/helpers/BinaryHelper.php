@@ -37,7 +37,7 @@ class BinaryHelper
      */
     public static function getExtension($base64EncodedBinary)
     {
-        $regex = '/data:(\w+\/\w+);base64/';
+        $regex = '/data:(\w+\/\S+);base64/';
         preg_match($regex, $base64EncodedBinary, $matches);
         if (!isset($matches[1])) {
             throw new \RuntimeException(
