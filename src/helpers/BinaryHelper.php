@@ -40,9 +40,10 @@ class BinaryHelper
         $regex = '/data:(\w+\/\S+);base64/';
         preg_match($regex, $base64EncodedBinary, $matches);
         if (!isset($matches[1])) {
+            $mimeTypeSubString = substr($base64EncodedBinary, 0, 150);
             throw new \RuntimeException(
                 'Unable to determine mimeType from data, please ensure the base64 encoded file contains the mime ' .
-                'type for example "data:image/png;base64,"',
+                'type for example "data:image/png;base64,", substring of mimetype: ' . $mimeTypeSubString,
                 2
             );
         }
