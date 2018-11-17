@@ -21,11 +21,16 @@ trait FirstOrCreate
     /**
      * @param mixed|array $searchCondition
      * @param array|null $createParameters
+     * @param bool $cache
      * @return ActiveRecord|bool false if unable to create
      */
-    public static function firstOrCreate($searchCondition, array $createParameters = null)
+    public static function firstOrCreate($searchCondition, array $createParameters = null, $cache = true)
     {
-        $model = static::find()->cache(true, new TagDependency(['tags' => static::class]))->where($searchCondition)->one();
+        if (true === $cache) {
+            $model = static::find()->cache(true, new TagDependency(['tags' => static::class]))->where($searchCondition)->one();
+        } else {
+            $model = static::find()->where($searchCondition)->one();
+        }
         if (null !== $model) {
             return $model;
         }
