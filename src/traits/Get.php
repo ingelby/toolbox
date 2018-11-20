@@ -9,6 +9,7 @@ use yii\helpers\StringHelper;
 
 trait Get
 {
+    use CacheNames;
 
     /**
      * @var array
@@ -44,14 +45,6 @@ trait Get
             static::$hyperCache[$cacheKey] = $model;
 
             return $model;
-        }, 3600, new TagDependency(['tags' => self::getCacheKey() . $value]));
-    }
-
-    /**
-     * @return string
-     */
-    public static function getCacheKey(): string
-    {
-        return static::tableName();
+        }, 3600, new TagDependency(['tags' => self::getCacheTag() . $value]));
     }
 }
