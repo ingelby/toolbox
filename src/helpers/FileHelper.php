@@ -48,9 +48,10 @@ class FileHelper
      * Converts bytes into human readable file size.
      *
      * @param int $bytes
+     * @param string $separator
      * @return string human readable file size (2,87 Мb)
      */
-    public static function humanFileSize($bytes)
+    public static function humanFileSize($bytes, $separator = ',')
     {
         $result = '0 B';
         $arBytes = [
@@ -79,7 +80,7 @@ class FileHelper
         foreach ($arBytes as $arItem) {
             if ($bytes >= $arItem['value']) {
                 $result = $bytes / $arItem['value'];
-                $result = str_replace('.', ',', (string)round($result, 2)) . ' ' . $arItem['unit'];
+                $result = str_replace('.', $separator, (string)round($result, 2)) . ' ' . $arItem['unit'];
                 break;
             }
         }
