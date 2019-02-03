@@ -1,6 +1,6 @@
 <?php
 
-namespace ingelby\toolbox\helpers;
+namespace ingelby\toolbox\behaviors;
 
 use yii\base\InvalidCallException;
 use yii\behaviors\AttributeBehavior;
