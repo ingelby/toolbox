@@ -4,6 +4,7 @@ namespace ingelby\toolbox\traits;
 
 
 use common\helpers\LoggingHelper;
+use ingelby\toolbox\helpers\HyperCache;
 use yii\caching\TagDependency;
 use yii\helpers\StringHelper;
 
@@ -13,14 +14,17 @@ trait Get
 
     /**
      * @var array
+     * @deprecated
+     * @see HyperCache
      */
     protected static $hyperCache = [];
 
     /**
      * For retrieving the first of an item by a key
-     * @param $value
+     *
+     * @param        $value
      * @param string $key
-     * @param bool $failOnNull
+     * @param bool   $failOnNull
      * @return static|null
      * @throws \yii\web\HttpException
      */
@@ -28,12 +32,11 @@ trait Get
     {
         $cacheKey = static::getCacheKey() . __FUNCTION__ . $value . $key;
 
-        if (array_key_exists($cacheKey, static::$hyperCache)) {
-            \Yii::debug('Item got from hyper cache');
-            return static::$hyperCache[$cacheKey];
+        if (false !== $value = HyperCache::get($cacheKey)) {
+            return $value;
         }
 
-        return \Yii::$app->cache->getOrSet($cacheKey, function () use ($cacheKey, $key, $value, $failOnNull) {
+        $model = \Yii::$app->cache->getOrSet($cacheKey, function () use ($cacheKey, $key, $value, $failOnNull) {
             \Yii::info('Caching key: ' . $cacheKey);
 
             $model = static::findOne([$key => $value]);
@@ -42,9 +45,12 @@ trait Get
                 throw new \yii\web\HttpException(404, $friendlyTableName . ' not found');
             }
 
-            static::$hyperCache[$cacheKey] = $model;
+            HyperCache::set($cacheKey, $model);
 
             return $model;
         }, 3600, new TagDependency(['tags' => self::getCacheTag() . $value]));
+
+        HyperCache::set($cacheKey, $model);
+        return $model;
     }
 }
