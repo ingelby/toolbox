@@ -32,13 +32,15 @@ trait Get
     {
         $cacheKey = static::getCacheKey() . __FUNCTION__ . $value . $key;
 
-        if (false !== $value = HyperCache::get($cacheKey)) {
-            return $value;
+        if (false !== $cacheValue = HyperCache::get($cacheKey)) {
+            if (null === $cacheValue && true === $failOnNull) {
+                $friendlyTableName = ucwords(str_replace('_', ' ', static::getCacheKey()));
+                throw new \yii\web\HttpException(404, $friendlyTableName . ' not found');
+            }
+            return $cacheValue;
         }
-
         $model = \Yii::$app->cache->getOrSet($cacheKey, function () use ($cacheKey, $key, $value, $failOnNull) {
             \Yii::info('Caching key: ' . $cacheKey);
-
             $model = static::findOne([$key => $value]);
             if (null === $model && true === $failOnNull) {
                 $friendlyTableName = ucwords(str_replace('_', ' ', static::getCacheKey()));
@@ -51,6 +53,7 @@ trait Get
         }, 3600, new TagDependency(['tags' => self::getCacheTag() . $value]));
 
         HyperCache::set($cacheKey, $model, self::getCacheTag() . $value);
+
         return $model;
     }
 }
