@@ -12,6 +12,11 @@ class HyperCache
     protected static $hyperCache = [];
 
     /**
+     * @var array
+     */
+    protected static $dependency = [];
+
+    /**
      * @var int How many items can be in the hypercache
      */
     protected static $maxHyperCacheLength = 50;
@@ -40,15 +45,20 @@ class HyperCache
     }
 
     /**
-     * @param $cacheKey
-     * @param $value
+     * @param string $cacheKey
+     * @param mixed  $value
+     * @param string $dependency
      * @return bool
      */
-    protected static function store($cacheKey, $value): bool
+    protected static function store($cacheKey, $value, $dependency = null): bool
     {
         Yii::debug('Storing "' . $cacheKey . '" in hyper cache');
         static::$hyperCache[$cacheKey]['value'] = $value;
         static::$hyperCache[$cacheKey]['hits'] = 0;
+
+        if (null !== $dependency) {
+            static::$dependency[$dependency][] = $cacheKey;
+        }
 
         return true;
     }
@@ -58,21 +68,47 @@ class HyperCache
      */
     public static function delete($cacheKey)
     {
+        Yii::debug('Deleting "' . $cacheKey . '" in hyper cache');
+
         unset(static::$hyperCache[$cacheKey]);
+    }
+
+    public static function bust()
+    {
+        Yii::debug('Busting hyper cache');
+
+        static::$hyperCache = [];
+        static::$dependency = [];
+    }
+
+    /**
+     * @param string $dependency
+     */
+    public static function bustDependency($dependency)
+    {
+        Yii::debug('Busting hyper cache dependency');
+
+        if (\array_key_exists($dependency, static::$dependency)) {
+            foreach (static::$dependency[$dependency] as $item) {
+                unset(static::$hyperCache[$item]);
+            }
+            unset(static::$dependency[$dependency]);
+        }
     }
 
     /**
      * @param string $cacheKey
      * @param mixed  $value
+     * @param string $dependency
      * @return bool
      */
-    public static function set($cacheKey, $value): bool
+    public static function set($cacheKey, $value, $dependency = null): bool
     {
         $hyperCacheSize = \count(static::$hyperCache);
         Yii::debug('Setting "' . $cacheKey . '" in hyper cache, current length: ' . $hyperCacheSize);
 
         if ($hyperCacheSize < static::$maxHyperCacheLength) {
-            return static::store($cacheKey, $value);
+            return static::store($cacheKey, $value, $dependency);
         }
 
         Yii::debug('Hyper cache size limit reached');
@@ -95,6 +131,6 @@ class HyperCache
 
         Yii::debug('Last element, hits: ' . $lastElement['hits'] . ' new hyper cache length: ' . \count(static::$hyperCache));
 
-        return static::store($cacheKey, $value);
+        return static::store($cacheKey, $value, $dependency);
     }
 }

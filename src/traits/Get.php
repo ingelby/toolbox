@@ -45,12 +45,12 @@ trait Get
                 throw new \yii\web\HttpException(404, $friendlyTableName . ' not found');
             }
 
-            HyperCache::set($cacheKey, $model);
+            HyperCache::set($cacheKey, $model, self::getCacheTag() . $value);
 
             return $model;
         }, 3600, new TagDependency(['tags' => self::getCacheTag() . $value]));
 
-        HyperCache::set($cacheKey, $model);
+        HyperCache::set($cacheKey, $model, self::getCacheTag() . $value);
         return $model;
     }
 }
