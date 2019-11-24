@@ -5,8 +5,9 @@ namespace ingelby\toolbox\traits;
 trait SimpleCacheLock
 {
     /**
+     * Does the lock name have a lock on it
      * @param string $lockName
-     * @return bool
+     * @return bool returns true if there is a lock
      */
     public static function hasLock($lockName)
     {
@@ -17,14 +18,15 @@ trait SimpleCacheLock
     /**
      * @param string $lockName
      * @param int    $interval
+     * @param int    $lockTimeout time in seconds
      * @return bool
      */
-    public static function waitForLock($lockName, $interval = 500000)
+    public static function waitForLock($lockName, $interval = 500000, $lockTimeout = 30)
     {
         \Yii::info('Waiting for lock: ' . $lockName);
-        if (!static::hasLock($lockName)) {
+        if (!static::isLocked($lockName)) {
             \Yii::info('No lock for: ' . $lockName);
-            return static::lock($lockName);
+            return static::lock($lockName, $lockTimeout);
         }
         \Yii::info('Lock in place, sleeping for: ' . $interval);
 
@@ -35,12 +37,13 @@ trait SimpleCacheLock
 
     /**
      * @param string $lockName
+     * @param int    $lockTimeout time in seconds
      * @return bool
      */
-    public static function lock($lockName)
+    public static function lock($lockName, $lockTimeout = 30)
     {
         \Yii::info('Locking: ' . $lockName);
-        return \Yii::$app->cache->set($lockName, 'locked', 30);
+        return \Yii::$app->cache->set($lockName, 'locked', $lockTimeout);
     }
 
     /**
