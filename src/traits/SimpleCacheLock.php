@@ -24,7 +24,7 @@ trait SimpleCacheLock
     public static function waitForLock($lockName, $interval = 500000, $lockTimeout = 30)
     {
         \Yii::info('Waiting for lock: ' . $lockName);
-        if (!static::isLocked($lockName)) {
+        if (!static::hasLock($lockName)) {
             \Yii::info('No lock for: ' . $lockName);
             return static::lock($lockName, $lockTimeout);
         }
