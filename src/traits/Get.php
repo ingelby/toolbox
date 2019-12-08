@@ -25,12 +25,18 @@ trait Get
      * @param        $value
      * @param string $key
      * @param bool   $failOnNull
+     * @param bool   $honorClassInheritance Set to false if you dont care about the subclass being returned
      * @return static|null
      * @throws \yii\web\HttpException
      */
-    public static function get($value, string $key = 'id', $failOnNull = false)
+    public static function get($value, string $key = 'id', $failOnNull = false, $honorClassInheritance = true)
     {
-        $cacheKey = static::getCacheKey() . __FUNCTION__ . $value . $key;
+        //This is important as it will take into account class inheritance
+        $cacheKey = static::getSafeCacheKey() . __FUNCTION__ . $value . $key;
+
+        if (false === $honorClassInheritance) {
+            $cacheKey = static::getCacheKey() . __FUNCTION__ . $value . $key;
+        }
 
         if (false !== $cacheValue = HyperCache::get($cacheKey)) {
             if (null === $cacheValue && true === $failOnNull) {

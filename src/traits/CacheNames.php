@@ -4,6 +4,14 @@ namespace ingelby\toolbox\traits;
 
 trait CacheNames
 {
+    /**
+     * Should be used when you want to be careful of subclasses when storing in class.
+     * @return string
+     */
+    public static function getSafeCacheKey(): string
+    {
+        return static::class . '_' . static::tableName();
+    }
 
     /**
      * @return string
