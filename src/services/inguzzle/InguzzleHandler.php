@@ -1,11 +1,11 @@
 <?php
 
-namespace ingelby\toolbox\services;
+namespace ingelby\toolbox\services\inguzzle;
 
 use ingelby\toolbox\helpers\LoggingHelper;
-use ingelby\toolbox\services\exceptions\InguzzleClientException;
-use ingelby\toolbox\services\exceptions\InguzzleInternalServerException;
-use ingelby\toolbox\services\exceptions\InguzzleServerException;
+use ingelby\toolbox\services\inguzzle\exceptionsInguzzleClientException;
+use ingelby\toolbox\services\inguzzle\exceptionsInguzzleInternalServerException;
+use ingelby\toolbox\services\inguzzle\exceptionsInguzzleServerException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
