@@ -3,9 +3,9 @@
 namespace ingelby\toolbox\services\inguzzle;
 
 use ingelby\toolbox\helpers\LoggingHelper;
-use ingelby\toolbox\services\inguzzle\exceptionsInguzzleClientException;
-use ingelby\toolbox\services\inguzzle\exceptionsInguzzleInternalServerException;
-use ingelby\toolbox\services\inguzzle\exceptionsInguzzleServerException;
+use ingelby\toolbox\services\inguzzle\exceptions\InguzzleClientException;
+use ingelby\toolbox\services\inguzzle\exceptions\InguzzleInternalServerException;
+use ingelby\toolbox\services\inguzzle\exceptions\InguzzleServerException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
