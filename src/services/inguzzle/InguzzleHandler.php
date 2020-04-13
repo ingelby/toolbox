@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7\Stream;
+use Prophecy\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use Yii;
@@ -180,6 +181,29 @@ class InguzzleHandler
         }
     }
 
+    /**
+     * @param string $method
+     * @param string $uri
+     * @param array  $options
+     * @return PromiseInterface
+     */
+    protected function requestAsync($method, $uri, array $options): ?array
+    {
+        $method = strtolower($method);
+
+        if (!in_array($method, $this->supportedMethods)) {
+            throw new InguzzleInternalServerException('Unsupported method, ' . $method);
+        }
+
+        Yii::info('Sending request async to: ' . $uri, $this->loggingCategory);
+
+        return $this->client->$method(
+            $this->uriPrefix . $uri,
+            $options
+        );
+
+    }
+
 
     /**
      * @param string $uri
@@ -209,6 +233,33 @@ class InguzzleHandler
 
 
         return $this->request('get', $uri, $options);
+    }
+
+    /**
+     * @param string $uri
+     * @param array  $queryParameters
+     * @param array  $additionalHeaders
+     * @return PromiseInterface
+     */
+    public function getAsync($uri, array $queryParameters = [], array $additionalHeaders = [])
+    {
+        Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
+        Yii::info($queryParameters, $this->loggingCategory);
+
+        $options = [
+            'query'   => $queryParameters,
+            'headers' =>
+                array_merge(
+                    [
+                        'content-type' => 'application/json',
+                        'Accept'       => 'application/json',
+                    ],
+                    $additionalHeaders
+                ),
+        ];
+
+
+        return $this->requestAsync('getAsync', $uri, $options);
     }
 
     /**
@@ -245,6 +296,41 @@ class InguzzleHandler
 
 
         return $this->request('post', $uri, $options);
+    }
+
+    /**
+     * @param string $uri
+     * @param array  $body
+     * @param array  $queryParameters
+     * @param array  $additionalHeaders
+     * @return array
+     * @throws InguzzleClientException
+     * @throws InguzzleInternalServerException
+     * @throws InguzzleServerException
+     */
+    public function put($uri, array $body = [], array $queryParameters = [], array $additionalHeaders = [])
+    {
+        Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
+        Yii::info($queryParameters, $this->loggingCategory);
+
+        $payload = Json::encode($body);
+
+        Yii::info($payload, $this->loggingCategory);
+
+        $options = [
+            'query'   => $queryParameters,
+            'body'    => $payload,
+            'headers' =>
+                array_merge(
+                    [
+                        'content-type' => 'application/json',
+                        'Accept'       => 'application/json',
+                    ],
+                    $additionalHeaders
+                ),
+        ];
+
+        return $this->request('put', $uri, $options);
     }
 
     /**
