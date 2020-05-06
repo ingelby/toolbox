@@ -57,6 +57,11 @@ class InguzzleHandler
     protected $serverErrorResponseCallback = null;
 
     /**
+     * @var bool
+     */
+    protected $logRequestPayload = true;
+
+    /**
      * BaseRequest constructor.
      *
      * @param string        $baseUrl
@@ -79,6 +84,22 @@ class InguzzleHandler
         );
         $this->clientErrorResponseCallback = $clientErrorResponseCallback;
         $this->serverErrorResponseCallback = $serverErrorResponseCallback;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getLogRequestPayload(): bool
+    {
+        return $this->logRequestPayload;
+    }
+
+    /**
+     * @param bool $loggingCategory
+     */
+    public function setLogRequestPayload($logRequestPayload): void
+    {
+        $this->logRequestPayload = $logRequestPayload;
     }
 
     /**
@@ -114,7 +135,7 @@ class InguzzleHandler
             throw new InguzzleInternalServerException('Unsupported method, ' . $method);
         }
 
-        Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
+        Yii::info('Sending ' . $method . '  request to: ' . $uri, $this->loggingCategory);
 
         try {
             /** @var ResponseInterface $response */
@@ -125,8 +146,8 @@ class InguzzleHandler
 
 
             $response = $response->getBody()->getContents();
-            Yii::info('Request was successful, response not in log', $this->loggingCategory);
-
+            Yii::info('Request was successful, response in debug log', $this->loggingCategory);
+            Yii::debug($response);
             return Json::decode($response);
         } catch (ClientException $exception) {
             LoggingHelper::LogException($exception, $this->loggingCategory);
@@ -279,7 +300,9 @@ class InguzzleHandler
 
         $payload = Json::encode($body);
 
-        Yii::info($payload, $this->loggingCategory);
+        if (true === $this->logRequestPayload) {
+            Yii::info($payload, $this->loggingCategory);
+        }
 
         $options = [
             'query'   => $queryParameters,
@@ -315,8 +338,9 @@ class InguzzleHandler
 
         $payload = Json::encode($body);
 
-        Yii::info($payload, $this->loggingCategory);
-
+        if (true === $this->logRequestPayload) {
+            Yii::info($payload, $this->loggingCategory);
+        }
         $options = [
             'query'   => $queryParameters,
             'body'    => $payload,
