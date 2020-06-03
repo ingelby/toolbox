@@ -73,15 +73,20 @@ class InguzzleHandler
         $baseUrl,
         $uriPrefix = '',
         callable $clientErrorResponseCallback = null,
-        callable $serverErrorResponseCallback = null
+        callable $serverErrorResponseCallback = null,
+        array $clientConfig = []
     )
     {
         $this->uriPrefix = $uriPrefix;
-        $this->client = new Client(
+
+        $config = array_merge(
             [
                 'base_uri' => $baseUrl,
-            ]
+            ],
+            $clientConfig
         );
+
+        $this->client = new Client($config);
         $this->clientErrorResponseCallback = $clientErrorResponseCallback;
         $this->serverErrorResponseCallback = $serverErrorResponseCallback;
     }
