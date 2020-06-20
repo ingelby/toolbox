@@ -178,7 +178,7 @@ class RackspaceHandler extends \yii\base\Component
      * @param string $directoryPath
      * @return array
      */
-    public function listObjects($directoryPath)
+    public function listObjects($directoryPath = '', array $options = [])
     {
         $directoryPath = $this->environment . '/' . $directoryPath;
         $objectStoreService = $this->client->objectStoreService(null, $this->region);
@@ -186,18 +186,18 @@ class RackspaceHandler extends \yii\base\Component
         $cdn = $objectStoreService->getContainer($this->projectContainer);
 
         $contents = [];
-        $objectList = $cdn->objectList(
-            [
-                'prefix' => $directoryPath,
-                'limit'  => 10000,
-            ]
-        );
+
+        $defaultOptions = [
+            'prefix' => $directoryPath,
+            'limit'  => 100,
+        ];
+
+        $options = array_merge($defaultOptions, $options);
+
+        $objectList = $cdn->objectList($options);
 
         /** @var DataObject $object */
         foreach ($objectList as $object) {
-            if (false !== $object->getDirectory()) {
-                continue;
-            }
             $contents[] = [
                 'fileName'      => substr($object->getName(), strlen($directoryPath)),
                 'size'          => $object->getContentLength(),
