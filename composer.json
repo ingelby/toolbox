@@ -16,7 +16,7 @@
   },
   "require": {
     "php": ">=7.0.0",
-    "rackspace/php-opencloud": "v2.*",
+    "rackspace/php-opencloud": "*",
     "guzzlehttp/guzzle": "6.*"
   },
   "require-dev": {
