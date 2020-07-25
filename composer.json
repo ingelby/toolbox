@@ -16,15 +16,11 @@
   },
   "require": {
     "php": ">=7.0.0",
-    "rackspace/php-opencloud": "^v3.0",
+    "rackspace/php-opencloud": "^v2.x-dev",
     "guzzlehttp/guzzle": "6.*"
   },
   "require-dev": {
   },
   "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:ingelby/openstack.git"
-    }
   ]
 }
