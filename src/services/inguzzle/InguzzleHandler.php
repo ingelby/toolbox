@@ -2,6 +2,7 @@
 
 namespace ingelby\toolbox\services\inguzzle;
 
+use GuzzleHttp\Promise\Promise;
 use ingelby\toolbox\helpers\LoggingHelper;
 use ingelby\toolbox\services\inguzzle\exceptions\InguzzleClientException;
 use ingelby\toolbox\services\inguzzle\exceptions\InguzzleInternalServerException;
@@ -211,15 +212,17 @@ class InguzzleHandler
      * @param string $method
      * @param string $uri
      * @param array  $options
-     * @return PromiseInterface
+     * @return Promise
      */
-    protected function requestAsync($method, $uri, array $options): ?array
+    protected function requestAsync($method, $uri, array $options): Promise
     {
         $method = strtolower($method);
 
         if (!in_array($method, $this->supportedMethods)) {
             throw new InguzzleInternalServerException('Unsupported method, ' . $method);
         }
+
+        $method .= 'Async';
 
         Yii::info('Sending request async to: ' . $uri, $this->loggingCategory);
 
@@ -285,7 +288,7 @@ class InguzzleHandler
         ];
 
 
-        return $this->requestAsync('getAsync', $uri, $options);
+        return $this->requestAsync('get', $uri, $options);
     }
 
     /**
