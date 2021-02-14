@@ -19,5 +19,5 @@
     "rackspace/php-opencloud": "*",
     "guzzlehttp/guzzle": "6.*|7.*",
     "ramsey/uuid": "3.*|4.*"
-  },
+  }
 }
