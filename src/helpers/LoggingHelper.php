@@ -43,10 +43,17 @@ class LoggingHelper
             'previous' => '',
         ];
 
-        if (null !== $e->getPrevious()) {
-            $error['previous'] = $e->getPrevious()->getMessage();
+        $depth = 1;
+        while (null !== $previous = $e->getPrevious()) {
+            $key = 'previous_' . $depth;
+            $error[$key] = $previous->getMessage();
+            $error[$key . '_message'] = $previous->getMessage();
+            $error[$key . '_trace'] = $previous->getTraceAsString();
+            $error[$key . '_line'] = $previous->getLine();
+            $error[$key . '_file'] = $previous->getFile();
+            $depth++;
         }
-
+        
         if ($e instanceof ModelException) {
             $error['modelException'] = json_encode($e->getModelErrors());
         }
