@@ -43,7 +43,7 @@ class PublicIdBehavior extends AttributeBehavior
 
         if (empty($this->attributes)) {
             $this->attributes = [
-                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->publicIdAttribute],
+                BaseActiveRecord::EVENT_BEFORE_VALIDATE => [$this->publicIdAttribute],
             ];
         }
     }
