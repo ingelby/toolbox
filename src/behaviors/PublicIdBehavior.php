@@ -40,10 +40,10 @@ class PublicIdBehavior extends AttributeBehavior
     public function init()
     {
         parent::init();
-        
+
         if (empty($this->attributes)) {
             $this->attributes = [
-                BaseActiveRecord::EVENT_AFTER_INSERT => [$this->publicIdAttribute],
+                BaseActiveRecord::EVENT_BEFORE_INSERT => [$this->publicIdAttribute],
             ];
         }
     }
