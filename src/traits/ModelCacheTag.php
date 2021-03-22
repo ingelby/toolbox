@@ -12,7 +12,7 @@ trait ModelCacheTag
 
     protected int $modelCacheTTL = 60 * 60 * 15;
 
-    public function invalidateSellerCacheTag(): void
+    public function invalidateModelCacheTag(): void
     {
         TagDependency::invalidate($this->getCache(), [$this->getModelCacheTag()]);
     }
