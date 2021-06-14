@@ -8,6 +8,7 @@ class LoggingHelper
 {
     const CATEGORY_CACHE = 'cache';
     const CATEGORY_CONSOLE = 'console';
+    const MAX_PREVIOUS_DEPTH = 10;
 
     /**
      * @param \Throwable $error
@@ -52,8 +53,11 @@ class LoggingHelper
             $error[$key . '_line'] = $previous->getLine();
             $error[$key . '_file'] = $previous->getFile();
             $depth++;
+            if (static::MAX_PREVIOUS_DEPTH < $depth) {
+                break;
+            }
         }
-        
+
         if ($e instanceof ModelException) {
             $error['modelException'] = json_encode($e->getModelErrors());
         }
