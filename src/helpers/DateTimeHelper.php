@@ -17,18 +17,29 @@ class DateTimeHelper
         return $d && $d->format($format) === $date;
     }
 
+    /**
+     * @param DateInterval $dateInterval
+     * @return int seconds
+     */
+    public static function dateIntervalToSeconds(\DateInterval $dateInterval): int
+    {
+        $reference = new \DateTimeImmutable;
+        $endTime = $reference->add($dateInterval);
+
+        return $endTime->getTimestamp() - $reference->getTimestamp();
+    }
 
     /**
-     * @param Carbon $carbon
+     * @param Carbon      $carbon
      * @param Carbon|null $diffDate
-     * @param array $disallowedMeasurements
+     * @param array       $disallowedMeasurements
      * @return string
      */
     public static function diffAsFullString(Carbon $carbon, Carbon $diffDate = null, $disallowedMeasurements = [])
     {
         $fullDateString = [];
 
-        $diff = (int) $carbon->diffInYears($diffDate, true);
+        $diff = (int)$carbon->diffInYears($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['years'] = $diff . ' ' . LanguageHelper::pluralize('year', $diff);
@@ -36,7 +47,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInMonths($diffDate, true);
+        $diff = (int)$carbon->diffInMonths($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['months'] = $diff . ' ' . LanguageHelper::pluralize('month', $diff);
@@ -44,7 +55,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInWeeks($diffDate, true);
+        $diff = (int)$carbon->diffInWeeks($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['weeks'] = $diff . ' ' . LanguageHelper::pluralize('week', $diff);
@@ -52,7 +63,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInDays($diffDate, true);
+        $diff = (int)$carbon->diffInDays($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['days'] = $diff . ' ' . LanguageHelper::pluralize('day', $diff);
@@ -60,7 +71,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInHours($diffDate, true);
+        $diff = (int)$carbon->diffInHours($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['hours'] = $diff . ' ' . LanguageHelper::pluralize('hour', $diff);
@@ -68,7 +79,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInMinutes($diffDate, true);
+        $diff = (int)$carbon->diffInMinutes($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['minutes'] = $diff . ' ' . LanguageHelper::pluralize('minutes', $diff);
@@ -76,7 +87,7 @@ class DateTimeHelper
         }
 
 
-        $diff = (int) $carbon->diffInSeconds($diffDate, true);
+        $diff = (int)$carbon->diffInSeconds($diffDate, true);
 
         if ($diff > 0) {
             $fullDateString['seconds'] = $diff . ' ' . LanguageHelper::pluralize('seconds', $diff);

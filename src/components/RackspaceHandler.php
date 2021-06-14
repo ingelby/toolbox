@@ -9,6 +9,13 @@ use OpenCloud\Rackspace;
 use \yii\web\UploadedFile;
 use OpenCloud\ObjectStore\Constants\UrlType;
 
+/**
+ * Class RackspaceHandler
+ *
+ * @package ingelby\toolbox\components
+ * @deprecated
+ * @see RackspaceV2Handler
+ */
 class RackspaceHandler extends \yii\base\Component
 {
     const REGION_LONDON = 'LON';
