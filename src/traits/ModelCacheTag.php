@@ -30,7 +30,16 @@ trait ModelCacheTag
      */
     public function getModelCacheTag(): string
     {
-        return static::getCacheTag() . '_' . $this->{$this->getModelPrimaryKey()};
+        return static::buildModelCacheTag($this->{$this->getModelPrimaryKey()});
+    }
+
+    /**
+     * @param string $primaryKey
+     * @return string
+     */
+    public static function buildModelCacheTag(string $primaryKey): string
+    {
+        return static::getCacheTag() . '_' . $primaryKey;
     }
 
     /**
