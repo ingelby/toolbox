@@ -93,6 +93,20 @@ class InguzzleHandler
     }
 
     /**
+     * @return Client
+     */
+    public function getClient(): Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(Client $client): void
+    {
+        $this->client = $client;
+    }
+
+
+    /**
      * @return bool
      */
     public function getLogRequestPayload(): bool
