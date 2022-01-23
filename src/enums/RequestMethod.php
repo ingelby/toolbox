@@ -1,6 +1,6 @@
 <?php
 
-namespace ingelby\toolbox\constants\enums;
+namespace ingelby\toolbox\enums;
 
 enum RequestMethod: string
 {
