@@ -4,7 +4,7 @@ namespace ingelby\toolbox\components\rackspace;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use ingelby\toolbox\components\rackspace\exceptions\RackspaceHandlerAuthenticationBaseException;
+use ingelby\toolbox\components\rackspace\exceptions\RackspaceHandlerAuthenticationException;
 use ingelby\toolbox\components\rackspace\exceptions\RackspaceHandlerUploadException;
 use ingelby\toolbox\constants\HttpStatus;
 use ingelby\toolbox\enums\RequestMethod;
@@ -39,7 +39,10 @@ class RackspaceStorageHandler extends \yii\base\Component
         'Access-Control-Request-Headers'               => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     ];
 
-    public function init()
+    /**
+     * @throws RackspaceHandlerAuthenticationException
+     */
+    public function init(): void
     {
         parent::init();
         if (null === $this->username || null === $this->apiKey) {
@@ -77,7 +80,7 @@ class RackspaceStorageHandler extends \yii\base\Component
                 ]
             );
         } catch (GuzzleException $e) {
-            throw new RackspaceHandlerAuthenticationBaseException(
+            throw new RackspaceHandlerAuthenticationException(
                 'Unable to get tokens from rackspace: ' . $e->getMessage(),
                 0,
                 $e
@@ -85,7 +88,7 @@ class RackspaceStorageHandler extends \yii\base\Component
         }
 
         if (HttpStatus::OK !== $response->getStatusCode()) {
-            throw new RackspaceHandlerAuthenticationBaseException(
+            throw new RackspaceHandlerAuthenticationException(
                 $response->getStatusCode() . ' returned from rackspace authentication API'
             );
         }
@@ -95,7 +98,7 @@ class RackspaceStorageHandler extends \yii\base\Component
         $authToken = $authResponseObject?->access?->token?->id;
 
         if (null === $authToken) {
-            throw new RackspaceHandlerAuthenticationBaseException('No authToken in auth response');
+            throw new RackspaceHandlerAuthenticationException('No authToken in auth response');
         }
 
         $this->authToken = $authToken;
@@ -138,6 +141,7 @@ class RackspaceStorageHandler extends \yii\base\Component
      * @param string $remoteFilePathName
      * @return string
      * @throws RackspaceHandlerUploadException
+     * @noinspection PhpMultipleClassDeclarationsInspection
      */
     public function uploadObject(
         string $fullLocalFileName,
@@ -222,7 +226,7 @@ class RackspaceStorageHandler extends \yii\base\Component
         $uri = substr($remoteFullPath, 0, -strlen($filename));
         //Remove project container
         $uri = substr($uri, strlen($this->projectContainer));
-        return $this->containerCdnUrlHttps .$uri . $this->encodeURIComponent($filename);
+        return $this->containerCdnUrlHttps . $uri . $this->encodeURIComponent($filename);
     }
 
     /**
@@ -234,5 +238,4 @@ class RackspaceStorageHandler extends \yii\base\Component
     {
         return $string;
     }
-
 }

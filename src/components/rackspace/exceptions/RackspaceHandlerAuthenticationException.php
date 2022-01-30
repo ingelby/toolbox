@@ -2,7 +2,7 @@
 
 namespace ingelby\toolbox\components\rackspace\exceptions;
 
-class RackspaceHandlerAuthenticationException extends RackspaceHandlerException
+class RackspaceHandlerAuthenticationException extends RackspaceHandlerBaseException
 {
 
 }
