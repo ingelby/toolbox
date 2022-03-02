@@ -257,12 +257,12 @@ class InguzzleHandler
      * @throws InguzzleInternalServerException
      * @throws InguzzleServerException
      */
-    public function get($uri, array $queryParameters = [], array $additionalHeaders = [])
+    public function get($uri, array $queryParameters = [], array $additionalHeaders = [], array $additionalOptions = [])
     {
         Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
         Yii::info($queryParameters, $this->loggingCategory);
 
-        $options = [
+        $options = array_merge($additionalOptions, [
             'query'   => $queryParameters,
             'headers' =>
                 array_merge(
@@ -272,8 +272,7 @@ class InguzzleHandler
                     ],
                     $additionalHeaders
                 ),
-        ];
-
+        ]);
 
         return $this->request('get', $uri, $options);
     }
@@ -284,12 +283,12 @@ class InguzzleHandler
      * @param array  $additionalHeaders
      * @return PromiseInterface
      */
-    public function getAsync($uri, array $queryParameters = [], array $additionalHeaders = [])
+    public function getAsync($uri, array $queryParameters = [], array $additionalHeaders = [], array $additionalOptions = [])
     {
         Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
         Yii::info($queryParameters, $this->loggingCategory);
 
-        $options = [
+        $options = array_merge($additionalOptions, [
             'query'   => $queryParameters,
             'headers' =>
                 array_merge(
@@ -299,8 +298,7 @@ class InguzzleHandler
                     ],
                     $additionalHeaders
                 ),
-        ];
-
+        ]);
 
         return $this->requestAsync('get', $uri, $options);
     }
@@ -315,7 +313,7 @@ class InguzzleHandler
      * @throws InguzzleInternalServerException
      * @throws InguzzleServerException
      */
-    public function post($uri, array $body = [], array $queryParameters = [], array $additionalHeaders = [])
+    public function post($uri, array $body = [], array $queryParameters = [], array $additionalHeaders = [], array $additionalOptions = [])
     {
         Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
         Yii::info($queryParameters, $this->loggingCategory);
@@ -326,7 +324,7 @@ class InguzzleHandler
             Yii::info($payload, $this->loggingCategory);
         }
 
-        $options = [
+        $options = array_merge($additionalOptions, [
             'query'   => $queryParameters,
             'body'    => $payload,
             'headers' =>
@@ -337,8 +335,7 @@ class InguzzleHandler
                     ],
                     $additionalHeaders
                 ),
-        ];
-
+        ]);
 
         return $this->request('post', $uri, $options);
     }
@@ -353,7 +350,7 @@ class InguzzleHandler
      * @throws InguzzleInternalServerException
      * @throws InguzzleServerException
      */
-    public function put($uri, array $body = [], array $queryParameters = [], array $additionalHeaders = [])
+    public function put($uri, array $body = [], array $queryParameters = [], array $additionalHeaders = [], array $additionalOptions = [])
     {
         Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
         Yii::info($queryParameters, $this->loggingCategory);
@@ -363,7 +360,8 @@ class InguzzleHandler
         if (true === $this->logRequestPayload) {
             Yii::info($payload, $this->loggingCategory);
         }
-        $options = [
+
+        $options = array_merge($additionalOptions, [
             'query'   => $queryParameters,
             'body'    => $payload,
             'headers' =>
@@ -374,7 +372,7 @@ class InguzzleHandler
                     ],
                     $additionalHeaders
                 ),
-        ];
+        ]);
 
         return $this->request('put', $uri, $options);
     }
@@ -388,12 +386,12 @@ class InguzzleHandler
      * @throws InguzzleInternalServerException
      * @throws InguzzleServerException
      */
-    public function delete($uri, array $queryParameters = [], array $additionalHeaders = [])
+    public function delete($uri, array $queryParameters = [], array $additionalHeaders = [], array $additionalOptions = [])
     {
         Yii::info('Sending request to: ' . $uri, $this->loggingCategory);
         Yii::info($queryParameters, $this->loggingCategory);
 
-        $options = [
+        $options = array_merge($additionalOptions, [
             'query'   => $queryParameters,
             'headers' =>
                 array_merge(
@@ -403,8 +401,7 @@ class InguzzleHandler
                     ],
                     $additionalHeaders
                 ),
-        ];
-
+        ]);
 
         return $this->request('delete', $uri, $options);
     }
